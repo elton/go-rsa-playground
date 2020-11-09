@@ -21,8 +21,19 @@ import (
 )
 
 func main() {
+	// Generate a 2048-bits key pair
 	privateKey, publicKey := encryption.GenerateKeyPair(2048)
 
 	fmt.Printf("Private Key: %v\n", privateKey)
-	fmt.Printf("Public Key: %v\n",publicKey)
+	fmt.Printf("Public Key: %v\n", publicKey)
+
+	// Create PEM string
+	privKeyStr := encryption.ExportPrivateKeyAsPEMStr(privateKey)
+	pubKeyStr := encryption.ExportPubKeyAsPEMStr(publicKey)
+
+	fmt.Println(privKeyStr)
+	fmt.Println(pubKeyStr)
+
+	encryption.SaveKeyToFile(privKeyStr, "privkey.pem")
+	encryption.SaveKeyToFile(pubKeyStr, "pubkey.pem")
 }
