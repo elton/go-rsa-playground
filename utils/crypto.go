@@ -37,14 +37,16 @@ func main() {
 	fmt.Println(privKeyStr)
 	fmt.Println(pubKeyStr)
 
+	// Save PEM string to a file.
 	encryption.SaveKeyToFile(privKeyStr, "privkey.pem")
 	encryption.SaveKeyToFile(pubKeyStr, "pubkey.pem")
 
 	privKeyFile := encryption.ExportPEMFileToPrivKey("privkey.pem")
 	fmt.Printf("Private Key: %v\n", privKeyFile)
 
+	//  This function uses the method OAEP to ensure that encrypting the same message twice does not result in the same ciphertext.
 	message := []byte("super secret message")
-	chiperText, err := rsa.EncryptOAEP(
+	cipherText, err := rsa.EncryptOAEP(
 		sha256.New(),
 		rand.Reader,
 		publicKey,
@@ -55,5 +57,9 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println("Encrypted message: ", chiperText)
+	fmt.Println("Encrypted message: ", cipherText)
+
+	// Dectrypt the message using ras.DecryptOAEP function.
+	decMessage, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, privateKey, chiperText, nil)
+	fmt.Printf("Original: %s\n", decMessage)
 }
