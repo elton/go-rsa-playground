@@ -60,6 +60,6 @@ func main() {
 	fmt.Println("Encrypted message: ", cipherText)
 
 	// Dectrypt the message using ras.DecryptOAEP function.
-	decMessage, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, privateKey, chiperText, nil)
+	decMessage, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, privateKey, cipherText, nil)
 	fmt.Printf("Original: %s\n", decMessage)
 }
