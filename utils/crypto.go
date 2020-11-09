@@ -15,6 +15,7 @@
 package main
 
 import (
+	"crypto"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
@@ -23,6 +24,7 @@ import (
 	"github.com/elton/go-rsa-playground/utils/internal/encryption"
 )
 
+// follow the article from https://levelup.gitconnected.com/a-guide-to-rsa-encryption-in-go-1a18d827f35d
 func main() {
 	// Generate a 2048-bits key pair
 	privateKey, publicKey := encryption.GenerateKeyPair(2048)
@@ -45,6 +47,7 @@ func main() {
 	fmt.Printf("Private Key: %v\n", privKeyFile)
 
 	//  This function uses the method OAEP to ensure that encrypting the same message twice does not result in the same ciphertext.
+	// The message we want to encrypt. It must be shorter than the public modulus (2048 bits, in our case) minus twice the hash length (32 bytes) minus 2. For our case, the message must be 190 bytes at maximum.
 	message := []byte("super secret message")
 	cipherText, err := rsa.EncryptOAEP(
 		sha256.New(),
@@ -62,4 +65,19 @@ func main() {
 	// Dectrypt the message using ras.DecryptOAEP function.
 	decMessage, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, privateKey, cipherText, nil)
 	fmt.Printf("Original: %s\n", decMessage)
+
+	// Sign the message using rsa.SignPSS
+	msgHash := sha256.New()
+	msgHash.Write(message)
+	msgHashSum := msgHash.Sum(nil)
+	// We have to provide a random reader, so every time we sign, we have a different signature.
+	signature, _ := rsa.SignPSS(rand.Reader, privateKey, crypto.SHA256, msgHashSum, nil)
+
+	// Verify the signature
+	err = rsa.VerifyPSS(publicKey, crypto.SHA256, msgHashSum, signature, nil)
+	if err != nil {
+		fmt.Println("Verification failed: ", err)
+	} else {
+		fmt.Println("Message verified.")
+	}
 }
