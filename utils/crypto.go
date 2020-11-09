@@ -36,4 +36,7 @@ func main() {
 
 	encryption.SaveKeyToFile(privKeyStr, "privkey.pem")
 	encryption.SaveKeyToFile(pubKeyStr, "pubkey.pem")
+
+	privKeyFile := encryption.ExportPEMFileToPrivKey("privkey.pem")
+	fmt.Printf("Private Key: %v\n", privKeyFile)
 }
