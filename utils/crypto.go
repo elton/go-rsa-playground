@@ -13,3 +13,16 @@
 // limitations under the License.
 
 package main
+
+import (
+	"fmt"
+
+	"github.com/elton/go-rsa-playground/utils/internal/encryption"
+)
+
+func main() {
+	privateKey, publicKey := encryption.GenerateKeyPair(2048)
+
+	fmt.Printf("Private Key: %v\n", privateKey)
+	fmt.Printf("Public Key: %v\n",publicKey)
+}
