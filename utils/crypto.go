@@ -15,6 +15,9 @@
 package main
 
 import (
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/sha256"
 	"fmt"
 
 	"github.com/elton/go-rsa-playground/utils/internal/encryption"
@@ -39,4 +42,18 @@ func main() {
 
 	privKeyFile := encryption.ExportPEMFileToPrivKey("privkey.pem")
 	fmt.Printf("Private Key: %v\n", privKeyFile)
+
+	message := []byte("super secret message")
+	chiperText, err := rsa.EncryptOAEP(
+		sha256.New(),
+		rand.Reader,
+		publicKey,
+		message,
+		nil,
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Encrypted message: ", chiperText)
 }
